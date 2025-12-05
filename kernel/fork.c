@@ -2251,6 +2251,18 @@ __latent_entropy struct task_struct *copy_process(
 	struct nsproxy *nsp = current->nsproxy;
 
 	/*
+	 * VMThreads are usually not enabled, so do this test
+	 * early and bail out if it is wrong, to avoid doing a lot
+	 * of work we have to tear down. For now, VM Threads only
+	 * affects whether we return to user space or a VM.
+	 */
+	if (likely(!IS_ENABLED(CONFIG_VMTHREADS))) {
+		if (clone_flags & CLONE_VMTHREAD) {
+			return ERR_PTR(-EINVAL);
+		}
+	}
+
+	/*
 	 * Don't allow sharing the root directory with processes in a different
 	 * namespace
 	 */
@@ -2328,6 +2340,11 @@ __latent_entropy struct task_struct *copy_process(
 	if (!p)
 		goto fork_out;
 	p->flags &= ~PF_KTHREAD;
+
+#if IS_ENABLED(CONFIG_VMTHREADS)
+	p->vmthread = (clone_flags & CLONE_VMTHREAD) != 0;
+#endif
+
 	if (args->kthread)
 		p->flags |= PF_KTHREAD;
 	if (args->user_worker) {
