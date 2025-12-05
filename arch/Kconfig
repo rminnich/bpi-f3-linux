@@ -1516,4 +1516,21 @@ config FUNCTION_ALIGNMENT
 	default 4 if FUNCTION_ALIGNMENT_4B
 	default 0
 
+config HAVE_VMTHREADS
+	bool
+	help
+	  An arch should select this symbol if:
+	  - it supports VMTHREADS, i.e. VMs that can runs as a thread.
+
+config VMTHREADS
+	bool "VM Threads support"
+	depends on HAVE_VMTHREADS
+	default n
+	help
+	  This option turns on "VMThreads". If a process clones() with
+	  CLONE_VMTHREAD set, the child will exit the kernel to a VM,
+	  not user mode. The address space of parent and child
+	  will be completely shared. The parent may implement a VMM
+	  as needed.
+
 endmenu
