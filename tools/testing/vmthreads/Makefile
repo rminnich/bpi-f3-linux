@@ -1,4 +1,4 @@
-CC?=gcc
+CC=riscv64-linux-gnu-gcc
 vmthread: vmthread.c
 	$(CC) -o vmthread vmthread.c
 

@@ -1,15 +1,17 @@
 #define _GNU_SOURCE
 #include <sched.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <errno.h>
 
-#if 0
-int clone(int (*fn)(void *), void *stack, int flags, void *arg, ...
-                 /* pid_t *parent_tid, void *tls, pid_t *child_tid */ );
-#endif
-#define CLONE_VMTHREAD              0x100000000
+#include <linux/sched.h>
+
+long clone3(struct clone_args *cl_args, size_t size);
+
+#define CLONE_VMTHREAD              (uint64_t)0x100000000
 
 int done(void*arg)
 {
@@ -21,13 +23,19 @@ unsigned char stack[4096];
 
 int main(int argc, char *argv[])
 {
-	int flags = CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|0x11;
+	uint64_t flags = CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|0x11;
 	int ret;
 
+	printf("iszeof int %ld\n", sizeof(int));
 	if (argc > 1)
 		flags |= CLONE_VMTHREAD;
 
-	ret = clone(done, &stack[4095], flags, 0);
+	printf("flags %#lx\n", flags);
+
+	struct clone_args *args = calloc(sizeof(*args), 1);
+	args->flags = flags;
+
+	ret = syscall(435/*__NR_clone3*/, args, sizeof(args));
 	printf("clone returns %d, errno %d\n", ret, errno);
 }
 
