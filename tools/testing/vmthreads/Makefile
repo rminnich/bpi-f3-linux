@@ -1,6 +1,6 @@
 CC=riscv64-linux-gnu-gcc
-vmthread: vmthread.c
-	$(CC) -o vmthread vmthread.c
+vmthread: vmthread.c Makefile
+	$(CC) -g -o vmthread vmthread.c
 
 test: vmthread
 	./vmthread
