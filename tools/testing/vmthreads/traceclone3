@@ -1,0 +1,35 @@
+#!/bin/bash
+v=`pwd`/vmthread
+set -x
+mount -t tracefs tracefs /sys/kernel/tracing
+set -e
+cd /sys/kernel/tracing
+
+cat available_tracers
+echo 0 > tracing_on
+echo > trace
+echo function > current_tracer
+echo 1 > events/syscalls/sys_enter_clone3/enable
+echo 1 > events/syscalls/sys_exit_clone3/enable
+echo 1 > tracing_on
+set +e
+$v
+set -e
+echo 0 > tracing_on
+
+
+
+exit 0
+echo 0 > tracing_on
+echo > trace
+echo function > current_tracer
+
+# syscall tracepoints
+echo 1 > events/syscalls/sys_enter_clone3/enable
+echo 1 > events/syscalls/sys_exit_clone3/enable
+
+# functions
+echo sys_clone3 > set_ftrace_filter
+echo kernel_clone >> set_ftrace_filter
+
+echo 1 > tracing_on
