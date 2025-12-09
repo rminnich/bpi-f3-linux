@@ -5,6 +5,24 @@ mount -t tracefs tracefs /sys/kernel/tracing
 set -e
 cd /sys/kernel/tracing
 
+echo nop > /sys/kernel/tracing/current_tracer
+echo 0 > /sys/kernel/tracing/tracing_on
+echo > /sys/kernel/tracing/trace
+echo > /sys/kernel/tracing/set_ftrace_filter
+echo > /sys/kernel/tracing/set_graph_entry
+
+echo function_graph > /sys/kernel/tracing/current_tracer
+
+echo sys_clone3 > /sys/kernel/tracing/set_graph_entry
+set +e
+$v
+set -e
+echo 0 > tracing_on
+
+
+echo 1 > /sys/kernel/tracing/tracing_on
+
+exit 0
 cat available_tracers
 echo 0 > tracing_on
 echo > trace
