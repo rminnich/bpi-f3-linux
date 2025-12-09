@@ -2342,7 +2342,7 @@ __latent_entropy struct task_struct *copy_process(
 	p->flags &= ~PF_KTHREAD;
 
 #if IS_ENABLED(CONFIG_VMTHREADS)
-	p->vmthread = (clone_flags & CLONE_VMTHREAD) != 0;
+	p->vm_thread = (clone_flags & CLONE_VMTHREAD) != 0;
 #endif
 
 	if (args->kthread)
