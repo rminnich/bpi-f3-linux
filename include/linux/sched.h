@@ -755,6 +755,10 @@ struct task_struct {
 	unsigned int			saved_state;
 #endif
 
+#ifdef CONFIG_VMTHREADS
+	uint64_t vm_thread;
+#endif
+
 	/*
 	 * This begins the randomizable portion of task_struct. Only
 	 * scheduling-critical items should be added above here.
@@ -1534,10 +1538,6 @@ struct task_struct {
 
 #ifdef CONFIG_USER_EVENTS
 	struct user_event_mm		*user_event_mm;
-#endif
-
-#ifdef CONFIG_VMTHREADS
-	bool vm_thread;
 #endif
 
 	/*
