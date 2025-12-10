@@ -488,4 +488,7 @@ void asm_offsets(void)
 	DEFINE(STACKFRAME_SIZE_ON_STACK, ALIGN(sizeof(struct stackframe), STACK_ALIGN));
 	OFFSET(STACKFRAME_FP, stackframe, fp);
 	OFFSET(STACKFRAME_RA, stackframe, ra);
+#if IS_ENABLED(CONFIG_VMTHREADS)
+	DEFINE(TASK_VM_THREAD, offsetof(struct task_struct, vm_thread));
+#endif
 }
