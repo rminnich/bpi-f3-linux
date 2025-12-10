@@ -170,6 +170,23 @@ SYM_CODE_START_NOALIGN(ret_from_exception)
 	csrw CSR_STATUS, a0
 	csrw CSR_EPC, a2
 
+#if IS_ENABLED(CONFIG_VMTHREADS)
+	REG_L x6, TASK_VM_THREAD(tp)
+	beqz x6, not_vm_thread
+
+	REG_L x1,  PT_RA(sp)
+	REG_L x3,  PT_GP(sp)
+	REG_L x4,  PT_TP(sp)
+	REG_L x5,  PT_T0(sp)
+
+	restore_from_x6_to_x31
+
+	REG_L x2,  PT_SP(sp)
+
+	sret
+
+not_vm_thread:
+#endif
 	REG_L x1,  PT_RA(sp)
 	REG_L x3,  PT_GP(sp)
 	REG_L x4,  PT_TP(sp)
